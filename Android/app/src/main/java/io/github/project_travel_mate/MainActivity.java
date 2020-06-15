@@ -248,9 +248,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = FavouriteCitiesFragment.newInstance();
                 break;
 
-            case R.id.nav_about_us:
-                fragment = AboutUsFragment.newInstance();
-                break;
 
             case R.id.nav_signout: {
 
@@ -276,9 +273,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
 
-            case R.id.nav_myfriends:
-                fragment = MyFriendsFragment.newInstance();
-                break;
             case R.id.nav_settings:
                 fragment = SettingsFragment.newInstance();
                 break;

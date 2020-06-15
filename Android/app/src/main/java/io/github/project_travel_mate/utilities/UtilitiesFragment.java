@@ -94,10 +94,7 @@ public class UtilitiesFragment extends Fragment implements CardViewOptionsAdapte
                 intent = WorldClockActivity.getStartIntent(mActivity);
                 startActivity(intent);
                 break;
-            case 5:
-                intent = UpcomingWeekendsActivity.getStartIntent(mActivity);
-                startActivity(intent);
-                break;
+
         }
     }
 
@@ -125,10 +122,7 @@ public class UtilitiesFragment extends Fragment implements CardViewOptionsAdapte
                 new CardItemEntity(
                         getActivity().getDrawable(R.drawable.worldclock),
                         getResources().getString(R.string.text_clock)));
-        cardEntities.add(
-                new CardItemEntity(
-                        getActivity().getDrawable(R.drawable.upcoming_long_weekends),
-                        getResources().getString(R.string.upcoming_long_weekends)));
+
         if (!mHasMagneticSensor) {
             cardEntities.add(
                     new CardItemEntity(

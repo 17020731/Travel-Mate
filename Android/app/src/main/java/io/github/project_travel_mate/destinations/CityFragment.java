@@ -172,6 +172,9 @@ public class CityFragment extends Fragment implements TravelmateSnackbars {
                 mActivity.getString(R.string.interest_trends)
         ));
 
+        //Thêm ảnh của bangalore
+        mCities.get(2).setmAvatar("https://scontent.fhan1-1.fna.fbcdn.net/v/t34.0-12/p843x403/38988483_398924174048648_1668427624_n.jpg?_nc_cat=1&_nc_sid=e3f864&_nc_ohc=zsXsLCw8yewAX-dVeFX&_nc_ht=scontent.fhan1-1.fna&_nc_tp=6&oh=86a8e754966668f9cff8c6fd37b78b0f&oe=5EE7B29C");
+
         if (checkCachedCities(mCities)) {
             fetchCitiesList();
         } else {

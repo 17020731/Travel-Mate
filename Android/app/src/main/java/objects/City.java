@@ -126,6 +126,10 @@ public class City implements Serializable {
         return mBackgroundColor;
     }
 
+    public void setmAvatar(String mAvatar) {
+        this.mAvatar = mAvatar;
+    }
+
     public void setBackgroundColor(int mBackgroundColor) {
         this.mBackgroundColor = mBackgroundColor;
     }

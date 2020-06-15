@@ -159,7 +159,6 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
 
         if (id != null) {
             editDisplayName.setVisibility(View.INVISIBLE);
-            updateOptionsMenu();
         }
 
         boolean isNetworkConnected = Utils.isNetworkConnected(this);
@@ -376,14 +375,6 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
             case R.id.action_sign_out:
                 signOut();
                 return true;
-            case R.id.action_share_profile:
-                shareProfile();
-                return true;
-            case R.id.action_qrcode_scan:
-                Intent intent;
-                intent = ShareContactActivity.getStartIntent(ProfileActivity.this);
-                startActivity(intent);
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -534,8 +525,6 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
                                 editor.putString(USER_ID, String.valueOf(id));
                                 editor.putString(USER_STATUS, status);
                                 editor.apply();
-                            } else {
-                                updateOptionsMenu();
                             }
 
                         } catch (JSONException | IOException e) {
@@ -924,15 +913,6 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
         getMenuInflater().inflate(R.menu.profile_menu, menu);
         mOptionsMenu = menu;
         return true;
-    }
-
-    private void updateOptionsMenu() {
-        if (mOptionsMenu != null) {
-            MenuItem item = mOptionsMenu.findItem(R.id.action_share_profile);
-            item.setVisible(false);
-            MenuItem qrItem = mOptionsMenu.findItem(R.id.action_qrcode_scan);
-            qrItem.setVisible(false);
-        }
     }
 
     /**

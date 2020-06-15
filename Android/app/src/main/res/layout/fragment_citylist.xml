@@ -33,10 +33,9 @@
         <views.FontTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
             android:padding="10dp"
             android:text="@string/popular_cities"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="20sp" />
 
 
