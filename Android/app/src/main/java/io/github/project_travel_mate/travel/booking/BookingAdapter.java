@@ -4,10 +4,12 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+
+import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,12 +36,12 @@ import io.github.project_travel_mate.R;
 public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder> {
 
     private Context mContext;
-    private ArrayList<Booking> mListNew;
+    private ArrayList<Booking> mListBooks;
     private int type;
 
-    public BookingAdapter(Context mContext, ArrayList<Booking> mListNew, int type) {
+    public BookingAdapter(Context mContext, ArrayList<Booking> mListBooks, int type) {
         this.mContext = mContext;
-        this.mListNew = mListNew;
+        this.mListBooks = mListBooks;
         this.type = type;
     }
 
@@ -64,9 +66,9 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
-        Booking book = mListNew.get(position);
+        Booking book = mListBooks.get(position);
 
-//        Glide.with(holder.image).load(book.getImage()).into(holder.image);
+        Glide.with(holder.image).load(book.getImage()).into(holder.image);
 
         holder.rating.setRating(book.getRating());
         holder.count.setText("(" + book.getCount() + ")");
@@ -245,7 +247,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
 
     @Override
     public int getItemCount() {
-        return mListNew.size();
+        return mListBooks.size();
     }
 
     public class MyHolder extends RecyclerView.ViewHolder {
