@@ -45,6 +45,22 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.MyHolder> {
         holder.tvGuest.setText("Guest:" + bd.getCount());
         holder.tvType.setText("Type: " + bd.getType());
         holder.tvAmount.setText(String.format("%.2f", bd.getTotal() * 1.055) + " $");
+
+        if (bd.getMethod().equalsIgnoreCase("cash")) {
+            holder.imgMethod.setImageResource(R.drawable.cash);
+        } else if (bd.getMethod().equalsIgnoreCase("paypal")) {
+            holder.imgMethod.setImageResource(R.drawable.paypal);
+
+        } else if (bd.getMethod().equalsIgnoreCase("visa")) {
+            holder.imgMethod.setImageResource(R.drawable.visa);
+
+        } else if (bd.getMethod().equalsIgnoreCase("master card")) {
+            holder.imgMethod.setImageResource(R.drawable.master_card);
+
+        } else if (bd.getMethod().equalsIgnoreCase("momo")) {
+            holder.imgMethod.setImageResource(R.drawable.momo);
+
+        }
     }
 
     @Override

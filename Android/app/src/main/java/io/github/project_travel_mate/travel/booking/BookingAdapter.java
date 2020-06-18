@@ -44,13 +44,21 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
     private int type;
     private String mToken;
     private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor editor;
     private DatabaseReference mDatabase;
+    private CallbackInterface mCallback;
 
+    public TextView tvAmount;
+    public ImageView imgPay;
     public BookingAdapter(Context mContext, ArrayList<Booking> mListBooks, int type) {
         this.mContext = mContext;
         this.mListBooks = mListBooks;
         this.type = type;
+
+        try {
+            mCallback = (CallbackInterface) mContext;
+        } catch (ClassCastException ex) {
+            //.. should log the error or throw and exception
+        }
     }
 
     @Override
@@ -72,6 +80,8 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         mToken = mSharedPreferences.getString(USER_TOKEN, null);
+
+
         return myHolder;
     }
 
@@ -94,7 +104,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
 
                 final String[] METHOD = {""};
                 BottomSheetDialog dialog = new BottomSheetDialog(mContext);
-                dialog.setContentView(R.layout.dialig_booking);
+                dialog.setContentView(R.layout.dialog_booking);
                 final EditText edName = dialog.findViewById(R.id.edName);
                 EditText edIden = dialog.findViewById(R.id.edIden);
                 Spinner spinType = dialog.findViewById(R.id.spinType);
@@ -111,9 +121,11 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                 LinearLayout btnMomo = dialog.findViewById(R.id.btnMomo);
                 LinearLayout btnMaster = dialog.findViewById(R.id.btnMasterCard);
                 LinearLayout btnVisa = dialog.findViewById(R.id.btnVisa);
+                LinearLayout btnPaypal = dialog.findViewById(R.id.btnPaypal);
+                imgPay = dialog.findViewById(R.id.imgPay);
                 TextView tvTotal = dialog.findViewById(R.id.tvTotal);
                 TextView tvTax = dialog.findViewById(R.id.tvTax);
-                TextView tvAmount = dialog.findViewById(R.id.tvAmount);
+                tvAmount = dialog.findViewById(R.id.tvAmount);
                 Button btnSubmit = dialog.findViewById(R.id.btnSubmit);
 
 
@@ -181,6 +193,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                         btnMomo.setBackgroundResource(R.drawable.button_unselect);
                         btnVisa.setBackgroundResource(R.drawable.button_unselect);
                         btnMaster.setBackgroundResource(R.drawable.button_unselect);
+                        btnPaypal.setBackgroundResource(R.drawable.button_unselect);
 
                     }
                 });
@@ -193,6 +206,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                         btnCash.setBackgroundResource(R.drawable.button_unselect);
                         btnVisa.setBackgroundResource(R.drawable.button_unselect);
                         btnMaster.setBackgroundResource(R.drawable.button_unselect);
+                        btnPaypal.setBackgroundResource(R.drawable.button_unselect);
                     }
                 });
 
@@ -204,6 +218,8 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                         btnMomo.setBackgroundResource(R.drawable.button_unselect);
                         btnCash.setBackgroundResource(R.drawable.button_unselect);
                         btnMaster.setBackgroundResource(R.drawable.button_unselect);
+                        btnPaypal.setBackgroundResource(R.drawable.button_unselect);
+
                     }
                 });
 
@@ -215,6 +231,25 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                         btnMomo.setBackgroundResource(R.drawable.button_unselect);
                         btnVisa.setBackgroundResource(R.drawable.button_unselect);
                         btnCash.setBackgroundResource(R.drawable.button_unselect);
+                        btnPaypal.setBackgroundResource(R.drawable.button_unselect);
+                    }
+                });
+
+                btnPaypal.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        METHOD[0] = "Paypal";
+
+                        btnPaypal.setBackgroundResource(R.drawable.button_select);
+                        btnMomo.setBackgroundResource(R.drawable.button_unselect);
+                        btnMaster.setBackgroundResource(R.drawable.button_unselect);
+                        btnVisa.setBackgroundResource(R.drawable.button_unselect);
+                        btnCash.setBackgroundResource(R.drawable.button_unselect);
+
+                        if (mCallback != null) {
+                            mCallback.onHandleSelection(book);
+                        }
+
                     }
                 });
 
@@ -273,9 +308,16 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
         });
     }
 
+    public void processPayment() {
+    }
+
     @Override
     public int getItemCount() {
         return mListBooks.size();
+    }
+
+    public interface CallbackInterface {
+        void onHandleSelection(Booking bd);
     }
 
     public class MyHolder extends RecyclerView.ViewHolder {

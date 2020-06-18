@@ -110,6 +110,7 @@ public class HotelsActivity extends AppCompatActivity implements View.OnClickLis
         mDatabase.child("books").child(mToken).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mListBooks.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     BookDetail bd = snapshot.getValue(BookDetail.class);
                     mListBooks.add(bd);

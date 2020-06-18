@@ -1,15 +1,31 @@
 package io.github.project_travel_mate.travel.booking;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
-import android.widget.ImageView;
 
+import com.paypal.android.sdk.payments.PayPalConfiguration;
+import com.paypal.android.sdk.payments.PayPalPayment;
+import com.paypal.android.sdk.payments.PayPalService;
+import com.paypal.android.sdk.payments.PaymentActivity;
+import com.paypal.android.sdk.payments.PaymentConfirmation;
+
+import org.json.JSONException;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -17,20 +33,23 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.project_travel_mate.R;
 
-public class BookingActivity extends AppCompatActivity {
+public class BookingActivity extends AppCompatActivity implements BookingAdapter.CallbackInterface {
 
+    public static final int PAYPAL_REQUEST_CODE = 1;
+    private static final String PAYPAL_CLIENT_ID = "AQXkh5kMzlFd-Anf03R1AYOh2V8ZfsH-R-4iJ2gc2bMkSELdsSIPknvy000r5oeyhNY45P7cXIPfGzPW";
+    private static PayPalConfiguration config = new PayPalConfiguration()
+            .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
+            .clientId(PAYPAL_CLIENT_ID);
+
+    private String RESPONE = "";
     @BindView(R.id.mRecycle)
     RecyclerView mRecycle;
-
     @BindView(R.id.btnGrid)
-    ImageView btnGrid;
-
+    LinearLayout btnGrid;
     @BindView(R.id.btnTable)
-    ImageView btnTable;
-
+    LinearLayout btnTable;
     @BindView(R.id.btnBack)
     ImageView btnBack;
-
     private ArrayList<Booking> mListBookings = new ArrayList<>();
     private BookingAdapter mAdapter;
     private ItemOffsetDecoration itemDecoration;
@@ -42,6 +61,10 @@ public class BookingActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         ButterKnife.bind(this);
+
+        Intent intent = new Intent(this, PayPalService.class);
+        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+        startService(intent);
 
         mListBookings.add(new Booking("Coast Hotels", "857 Mandrake Point", "+86 932 918 3394", 1, 2, 616, "https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"));
         mListBookings.add(new Booking("Kings Inn", "88189 Nelson Parkway", "+86 162 897 2307", 1, 2, 1884, "https://images.pexels.com/photos/573552/pexels-photo-573552.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"));
@@ -98,21 +121,26 @@ public class BookingActivity extends AppCompatActivity {
         btnGrid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnGrid.setBackgroundResource(R.drawable.corner_type_select);
+                btnTable.setBackgroundResource(0);
                 setupGridView();
             }
         });
         btnTable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnTable.setBackgroundResource(R.drawable.corner_type_select);
+                btnGrid.setBackgroundResource(0);
                 setupTableView();
             }
         });
+
 
     }
 
     private void randomHotel() {
         for (int i = 0; i < 8; i++) {
-            mListBookings.remove(new Random().nextInt(mListBookings.size()-1));
+            mListBookings.remove(new Random().nextInt(mListBookings.size() - 1));
         }
     }
 
@@ -135,4 +163,38 @@ public class BookingActivity extends AppCompatActivity {
         mAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == PAYPAL_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                PaymentConfirmation confirmation = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
+                if (confirmation != null) {
+                    try {
+                        RESPONE = confirmation.toJSONObject().toString(4);
+                        if (RESPONE.contains("approved")) {
+                            mAdapter.tvAmount.setPaintFlags(mAdapter.tvAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                            mAdapter.imgPay.setImageResource(R.drawable.paypal);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(this, "Transaction canceled!", Toast.LENGTH_SHORT).show();
+            } else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID) {
+                Toast.makeText(this, "Payment invalid!", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+    }
+
+    @Override
+    public void onHandleSelection(Booking bd) {
+        PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(String.valueOf(1.055*bd.getPrice())), "USD", "Pay for booking", PayPalPayment.PAYMENT_INTENT_SALE);
+        Intent intent = new Intent(this, PaymentActivity.class);
+        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+        intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payPalPayment);
+        startActivityForResult(intent, PAYPAL_REQUEST_CODE);
+
+    }
 }
