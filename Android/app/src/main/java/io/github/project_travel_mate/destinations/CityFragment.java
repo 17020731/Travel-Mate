@@ -67,16 +67,13 @@ import static utils.Constants.USER_TOKEN;
 public class CityFragment extends Fragment implements TravelmateSnackbars {
 
     private static final String TAG = "CityFragment";
-
+    private final int[] mColors = {R.color.sienna, R.color.saffron, R.color.green, R.color.pink,
+            R.color.orange, R.color.blue, R.color.grey, R.color.yellow, R.color.purple, R.color.peach};
     @BindView(R.id.animation_view)
     LottieAnimationView animationView;
     @BindView(R.id.cities_list)
     ListView lv;
-
     private MaterialSearchView mMaterialSearchView;
-    private final int[] mColors = {R.color.sienna, R.color.saffron, R.color.green, R.color.pink,
-            R.color.orange, R.color.blue, R.color.grey, R.color.yellow, R.color.purple, R.color.peach};
-
     private String mNameyet;
     private Activity mActivity;
     private Handler mHandler;
@@ -172,23 +169,26 @@ public class CityFragment extends Fragment implements TravelmateSnackbars {
                 mActivity.getString(R.string.interest_trends)
         ));
 
-        //Thêm ảnh của bangalore
-        mCities.get(2).setmAvatar("https://scontent.fhan1-1.fna.fbcdn.net/v/t34.0-12/p843x403/38988483_398924174048648_1668427624_n.jpg?_nc_cat=1&_nc_sid=e3f864&_nc_ohc=zsXsLCw8yewAX-dVeFX&_nc_ht=scontent.fhan1-1.fna&_nc_tp=6&oh=86a8e754966668f9cff8c6fd37b78b0f&oe=5EE7B29C");
-
         if (checkCachedCities(mCities)) {
             fetchCitiesList();
+            //Thêm ảnh của bangalore
+
         } else {
             animationView.setVisibility(View.GONE);
 
             for (City city : mCities)
                 city.mInterests = mInterests;
+            mCities.get(2).setmAvatar("https://images.pexels.com/photos/3290386/pexels-photo-3290386.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260");
 
             mCityAdapter.updateData(mCities);
 
             if (mSpotlightShownCount <= 3) {
                 showSpotlightView(mSpotView);
             }
+
         }
+
+
     }
 
     /**

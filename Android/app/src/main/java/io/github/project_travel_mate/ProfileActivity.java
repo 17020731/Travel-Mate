@@ -343,6 +343,7 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri croppedImage = result.getUri();
+                //Phần này chưa được
                 getUrlFromCloudinary(croppedImage);
             }
         }

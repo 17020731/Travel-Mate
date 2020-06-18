@@ -113,6 +113,15 @@ dependencies {
 
     // World Country flag
     implementation 'com.github.blongho:world-country-data:v1.1.0'
+
+    //Design material
+    implementation 'com.android.support:design:28.0.0'
+
+    //Round image
+    implementation 'com.makeramen:roundedimageview:2.3.0'
+    //Glide
+//    implementation 'com.github.bumptech.glide:glide:4.11.0'
+
 }
 
 //preBuild.dependsOn('checkstyle')

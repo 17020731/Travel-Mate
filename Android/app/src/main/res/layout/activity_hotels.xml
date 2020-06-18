@@ -44,23 +44,46 @@
 
         <LinearLayout
             android:id="@+id/layout"
+            android:padding="@dimen/margin_20dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/select_city"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/round_shape"
-                android:gravity ="center"
-                android:padding="10dp"
-                android:layout_margin="20dp"
-                android:text="@string/prompt_city_name"
-                android:textColor="@color/white"
-                android:textSize="20sp"/>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <AutoCompleteTextView
+                    android:id="@+id/autoSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/corner_search"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:hint="Select city"
+                    android:paddingHorizontal="20dp"
+                    android:textColor="#000"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
 
+                <ImageView
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/btnVoice"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:src="@drawable/search"
+                    android:tint="#000" />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_marginTop="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:text="Hotel booked "/>
             <android.support.v7.widget.RecyclerView
+                android:layout_marginTop="@dimen/margin_20dp"
                 android:id="@+id/hotel_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
