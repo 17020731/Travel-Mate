@@ -30,7 +30,7 @@
 
     </LinearLayout>
     <RelativeLayout
-        android:layout_marginTop="@dimen/margin_20dp"
+        android:layout_marginTop="10dp"
         android:paddingHorizontal="20dp"
         android:paddingVertical="15dp"
         android:layout_width="match_parent"
@@ -78,7 +78,7 @@
         android:layout_height="0.5dp"
         android:background="#ccc"/>
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:id="@+id/mRecycle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

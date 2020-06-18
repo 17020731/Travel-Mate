@@ -50,7 +50,7 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
-            android:src="@drawable/default_user_icon"
+            android:src="@drawable/avatar"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

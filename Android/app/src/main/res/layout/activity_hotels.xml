@@ -84,7 +84,7 @@
                 android:text="Hotel booked "/>
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_marginTop="@dimen/margin_20dp"
-                android:id="@+id/hotel_list"
+                android:id="@+id/booking_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cacheColorHint="@android:color/transparent" />

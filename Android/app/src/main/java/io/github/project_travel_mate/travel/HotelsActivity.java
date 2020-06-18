@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -29,6 +31,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.project_travel_mate.R;
 import io.github.project_travel_mate.searchcitydialog.CitySearchModel;
+import io.github.project_travel_mate.travel.booking.App;
+import io.github.project_travel_mate.travel.booking.BookDetail;
 import io.github.project_travel_mate.travel.booking.BookingActivity;
 
 /**
@@ -37,7 +41,7 @@ import io.github.project_travel_mate.travel.booking.BookingActivity;
 public class HotelsActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    @BindView(R.id.hotel_list)
+    @BindView(R.id.booking_list)
     RecyclerView recyclerView;
     @BindView(R.id.animation_view)
     LottieAnimationView animationView;
@@ -52,6 +56,7 @@ public class HotelsActivity extends AppCompatActivity implements View.OnClickLis
     private ArrayList<String> mListCities = new ArrayList<>();
     private ArrayList<CitySearchModel> mSearchCities = new ArrayList<>();
 
+    private HotelAdapter mAdapter;
     public static Intent getStartIntent(Context context) {
         return new Intent(context, HotelsActivity.class);
     }
@@ -77,6 +82,15 @@ public class HotelsActivity extends AppCompatActivity implements View.OnClickLis
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.item_search, mListCities);
         autoSearch.setAdapter(arrayAdapter);
         autoSearch.setThreshold(1);
+
+
+        mAdapter = new HotelAdapter(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
     }
 
     public void getDataSearchCities() {
@@ -99,6 +113,8 @@ public class HotelsActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(intent);
             }
         });
+
+
     }
 
     @Override

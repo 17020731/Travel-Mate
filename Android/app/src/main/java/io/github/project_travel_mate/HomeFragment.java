@@ -23,8 +23,7 @@ public class HomeFragment extends Fragment {
     private Activity mActivity;
     @BindView(R.id.materialCardView2)
     MaterialCardView mHotelBookingView;
-    @BindView(R.id.materialCardView21)
-    MaterialCardView mFriendsView;
+
     @BindView(R.id.materialCardView3)
     MaterialCardView mTripsView;
     @BindView(R.id.popular_cities_home)
@@ -52,10 +51,7 @@ public class HomeFragment extends Fragment {
             Intent hotelIntent = HotelsActivity.getStartIntent(mActivity);
             startActivity(hotelIntent);
         });
-        mFriendsView.setOnClickListener(v1 -> {
-            Fragment friendsFragment = new MyFriendsFragment();
-            transactFragment(friendsFragment);
-        });
+
         mTripsView.setOnClickListener(v -> {
             Fragment tripsFragment = new MyTripsFragment();
             transactFragment(tripsFragment);

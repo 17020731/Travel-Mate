@@ -694,8 +694,8 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
         displayName.setText(fullName);
         emailId.setText(email);
         joiningDate.setText(String.format(getString(R.string.text_joining_date), dateJoined));
-        Picasso.with(ProfileActivity.this).load(imageURL).placeholder(R.drawable.default_user_icon)
-                .error(R.drawable.default_user_icon).into(displayImage);
+//        Picasso.with(ProfileActivity.this).load(imageURL).placeholder(R.drawable.default_user_icon)
+//                .error(R.drawable.default_user_icon).into(displayImage);
         setTitle(fullName);
 
         if (status != null && !status.equals("null")) {
@@ -725,8 +725,8 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
         joiningDate.setText(String.format(getString(R.string.text_joining_date), dateJoined));
 
         Picasso.with(ProfileActivity.this)
-                .load(R.drawable.default_user_icon)
-                .placeholder(R.drawable.default_user_icon)
+                .load(R.drawable.avatar)
+                .placeholder(R.drawable.avatar)
                 .into(displayImage);
 
         if (status != null && !status.equals("null")) {

@@ -3,13 +3,8 @@ package io.github.project_travel_mate.travel.booking;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
-import androidx.annotation.NonNull;
-
-import com.bumptech.glide.Glide;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +19,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
-
+import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.ArrayList;
@@ -38,6 +37,8 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
     private Context mContext;
     private ArrayList<Booking> mListBooks;
     private int type;
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
 
     public BookingAdapter(Context mContext, ArrayList<Booking> mListBooks, int type) {
         this.mContext = mContext;
@@ -76,14 +77,12 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
         holder.category.setText(book.getAddress());
         holder.price.setText(book.getPrice() + "$");
 
-        String NAME = "", ID = "", ROOM_TYPE = "";
-        String CHECK_IN = "", CHECK_OUT = "", HOTEL = "", ADDRESS = "";
-        double TOTAL = 0, TAX = 0, AMOUNT = 0;
 
         holder.btnBook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                final String[] METHOD = {""};
                 BottomSheetDialog dialog = new BottomSheetDialog(mContext);
                 dialog.setContentView(R.layout.dialig_booking);
                 final EditText edName = dialog.findViewById(R.id.edName);
@@ -167,6 +166,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                 btnCash.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        METHOD[0] = "Cash";
                         btnCash.setBackgroundResource(R.drawable.button_select);
                         btnMomo.setBackgroundResource(R.drawable.button_unselect);
                         btnVisa.setBackgroundResource(R.drawable.button_unselect);
@@ -178,6 +178,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                 btnMomo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        METHOD[0] = "Momo";
                         btnMomo.setBackgroundResource(R.drawable.button_select);
                         btnCash.setBackgroundResource(R.drawable.button_unselect);
                         btnVisa.setBackgroundResource(R.drawable.button_unselect);
@@ -188,6 +189,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                 btnVisa.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        METHOD[0] = "Visa";
                         btnVisa.setBackgroundResource(R.drawable.button_select);
                         btnMomo.setBackgroundResource(R.drawable.button_unselect);
                         btnCash.setBackgroundResource(R.drawable.button_unselect);
@@ -198,6 +200,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                 btnMaster.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        METHOD[0] = "Master Card";
                         btnMaster.setBackgroundResource(R.drawable.button_select);
                         btnMomo.setBackgroundResource(R.drawable.button_unselect);
                         btnVisa.setBackgroundResource(R.drawable.button_unselect);
@@ -226,11 +229,25 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                             Toast.makeText(mContext, "Please enter select date of check out!", Toast.LENGTH_SHORT);
                             return;
                         }
+                        String NAME = edName.getText().toString().trim();
+                        String ID = edIden.getText().toString().trim();
+                        String TYPE = spinType.getSelectedItem().toString();
+                        String NUM = tvNumGuest.getText().toString();
+                        String CHECK_IN = edCheckIn.getText().toString().trim();
+                        String CHECK_OUT = edCheckOut.getText().toString().trim();
+                        String HOTEL = tvHotel.getText().toString();
+                        String ADDRESS = tvAddress.getText().toString();
+                        double TOTAL = book.getPrice();
+
+
+                        BookDetail bookDetail = new BookDetail(NAME, ID, book.getImage(), TYPE, Integer.parseInt(NUM), CHECK_IN, CHECK_OUT, HOTEL, ADDRESS, METHOD[0], TOTAL);
+                        App.mListBooking.add(bookDetail);
+
                     }
                 });
                 tvTotal.setText(String.format("%.2f", (book.getPrice())));
                 tvTax.setText("" + String.format("%.2f", (0.055 * book.getPrice())));
-                tvAmount.setText(String.format("%.2f", book.getPrice() * 1.085));
+                tvAmount.setText(String.format("%.2f", book.getPrice() * 1.055));
                 dialog.show();
             }
         });
