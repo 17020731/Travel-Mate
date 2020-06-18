@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
+
+import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -31,6 +33,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.juanlabrador.badgecounter.BadgeCounter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -94,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String myTripsShortcut = "io.github.project_travel_mate.MyTripsShortcut";
     private static final String utilitiesShortcut = "io.github.project_travel_mate.UtilitiesShortcut";
 
+    private DatabaseReference mDatabase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mToken = mSharedPreferences.getString(USER_TOKEN, null);
         mHandler = new Handler(Looper.getMainLooper());
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         if (Utils.isNetworkConnected(this)) {
             DailyQuotesManager.checkDailyQuote(this);
         }
@@ -152,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
 
         String emailId = mSharedPreferences.getString(USER_EMAIL, getString(R.string.app_name));
-        fillNavigationView(emailId, null);
+        fillNavigationView(emailId);
 
         getProfileInfo();
         if (getIntent() != null && getIntent().getAction() != null) {
@@ -307,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return intent;
     }
 
-    private void fillNavigationView(String emailId, String imageURL) {
+    private void fillNavigationView(String emailId) {
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -317,9 +326,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView emailTextView = navigationHeader.findViewById(R.id.email);
         emailTextView.setText(emailId);
 
+        //
         ImageView imageView = navigationHeader.findViewById(R.id.image);
-        Picasso.with(MainActivity.this).load(imageURL).placeholder(R.drawable.icon_profile)
-                .error(R.drawable.icon_profile).into(imageView);
+//        Picasso.with(MainActivity.this).load(imageURL).placeholder(R.drawable.icon_profile)
+//                .error(R.drawable.icon_profile).into(imageView);
+//
+        mDatabase.child("images").child(mToken).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String image = (String) dataSnapshot.getValue();
+                System.out.println("url"+image);
+                Glide.with(imageView).load(image).into(imageView);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         imageView.setOnClickListener(v -> startActivity(ProfileActivity.getStartIntent(MainActivity.this)));
     }
 
@@ -367,7 +391,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         mSharedPreferences.edit().putString(USER_IMAGE, imageURL).apply();
                         mSharedPreferences.edit().putString(USER_STATUS, status).apply();
                         mSharedPreferences.edit().putString(USER_ID, String.valueOf(id)).apply();
-                        fillNavigationView(fullName, imageURL);
 
                     } catch (JSONException e) {
                         Log.e(TAG, "Error parsing user JSON, " + e.getMessage());
@@ -381,8 +404,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        fillNavigationView(mSharedPreferences.getString(USER_NAME, getString(R.string.app_name)),
-                mSharedPreferences.getString(USER_IMAGE, null));
+        fillNavigationView(mSharedPreferences.getString(USER_NAME, getString(R.string.app_name)));
         invalidateOptionsMenu();
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.ArrayList;
@@ -32,13 +35,17 @@ import java.util.Calendar;
 
 import io.github.project_travel_mate.R;
 
+import static utils.Constants.USER_TOKEN;
+
 public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder> {
 
     private Context mContext;
     private ArrayList<Booking> mListBooks;
     private int type;
-    private SharedPreferences sp;
+    private String mToken;
+    private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor editor;
+    private DatabaseReference mDatabase;
 
     public BookingAdapter(Context mContext, ArrayList<Booking> mListBooks, int type) {
         this.mContext = mContext;
@@ -62,6 +69,9 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
             View v = LayoutInflater.from(mContext).inflate(R.layout.item_booking_2, parent, false);
             myHolder = new MyHolder(v);
         }
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mToken = mSharedPreferences.getString(USER_TOKEN, null);
         return myHolder;
     }
 
@@ -214,19 +224,19 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                     @Override
                     public void onClick(View view) {
                         if (edName.getText().toString().isEmpty()) {
-                            Toast.makeText(mContext, "Please enter your name!", Toast.LENGTH_SHORT);
+                            Toast.makeText(mContext, "Please enter your name!", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         if (edIden.getText().toString().isEmpty()) {
-                            Toast.makeText(mContext, "Please enter your personal identification!", Toast.LENGTH_SHORT);
+                            Toast.makeText(mContext, "Please enter your personal identification!", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         if (edCheckIn.getText().toString().isEmpty()) {
-                            Toast.makeText(mContext, "Please enter select date of check in!", Toast.LENGTH_SHORT);
+                            Toast.makeText(mContext, "Please enter select date of check in!", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         if (edCheckOut.getText().toString().isEmpty()) {
-                            Toast.makeText(mContext, "Please enter select date of check out!", Toast.LENGTH_SHORT);
+                            Toast.makeText(mContext, "Please enter select date of check out!", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         String NAME = edName.getText().toString().trim();
@@ -241,8 +251,9 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
 
 
                         BookDetail bookDetail = new BookDetail(NAME, ID, book.getImage(), TYPE, Integer.parseInt(NUM), CHECK_IN, CHECK_OUT, HOTEL, ADDRESS, METHOD[0], TOTAL);
-                        App.mListBooking.add(bookDetail);
-
+                        mDatabase.child("books").child(mToken).push().setValue(bookDetail);
+                        Toast.makeText(mContext, "Booking success!", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     }
                 });
                 tvTotal.setText(String.format("%.2f", (book.getPrice())));

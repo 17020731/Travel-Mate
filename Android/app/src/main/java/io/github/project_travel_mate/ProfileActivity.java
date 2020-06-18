@@ -11,11 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -33,12 +28,30 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.airbnb.lottie.LottieAnimationView;
+import com.bumptech.glide.Glide;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -90,6 +103,11 @@ import static utils.DateUtils.getDate;
 import static utils.DateUtils.rfc3339ToMills;
 
 public class ProfileActivity extends AppCompatActivity implements TravelmateSnackbars {
+    //request code for picked image
+    private static final int RESULT_PICK_IMAGE = 1;
+    //request code for cropped image
+    private static final int RESULT_CROP_IMAGE = 2;
+    private static final String LOG_TAG = ProfileActivity.class.getSimpleName();
     @BindView(R.id.horizontalProgressBar)
     ProgressBar horizontalProgressBar;
     @BindView(R.id.display_image)
@@ -120,11 +138,23 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
     ConstraintLayout layout;
     @BindView(R.id.status_character_count)
     TextView characterCount;
+    private final TextWatcher mCountCharacters = new TextWatcher() {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            characterCount.setText(String.valueOf(s.length()) + getString(R.string.status_character_limit));
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.cities_travelled_text)
     TextView citiesTravelledHeading;
-
     private String mToken;
     private Handler mHandler;
     private String mUserStatus;
@@ -133,15 +163,23 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
     private boolean mFlagForDrawable = true;
     private SharedPreferences mSharedPreferences;
     private Menu mOptionsMenu;
-    //request code for picked image
-    private static final int RESULT_PICK_IMAGE = 1;
-    //request code for cropped image
-    private static final int RESULT_CROP_IMAGE = 2;
-    private static final String LOG_TAG = ProfileActivity.class.getSimpleName();
     private String mProfileImageUrl;
     private CitiesTravelledAdapter mCitiesAdapter;
     private MaterialDialog mDialog;
     private boolean mIsVerified;
+    private StorageReference mStorage;
+    private DatabaseReference mDatabase;
+
+    public static Intent getStartIntent(Context context) {
+        Intent intent = new Intent(context, ProfileActivity.class);
+        return intent;
+    }
+
+    public static Intent getStartIntent(Context context, String userId) {
+        Intent intent = new Intent(context, ProfileActivity.class);
+        intent.putExtra(OTHER_USER_ID, userId);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +191,21 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mToken = mSharedPreferences.getString(USER_TOKEN, null);
 
+        mStorage = FirebaseStorage.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mDatabase.child("images").child(mToken).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String image = (String) dataSnapshot.getValue();
+                Glide.with(displayImage).load(image).into(displayImage);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         Intent intent = getIntent();
         String id = intent.getStringExtra(OTHER_USER_ID);
 
@@ -249,7 +302,6 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
         });
     }
 
-
     public void sendVerificationEmail() {
         String uri;
         uri = API_LINK_V2 + "generate-verification-code";
@@ -305,20 +357,6 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
 
     }
 
-    private final TextWatcher mCountCharacters = new TextWatcher() {
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            characterCount.setText(String.valueOf(s.length()) + getString(R.string.status_character_limit));
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-
-        }
-    };
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -343,8 +381,49 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
             if (resultCode == RESULT_OK) {
                 Uri croppedImage = result.getUri();
                 //Phần này chưa được
-                getUrlFromCloudinary(croppedImage);
+//                getUrlFromCloudinary(croppedImage);
+
+                getUrlFromStorage(croppedImage);
             }
+        }
+    }
+
+    private void getUrlFromStorage(Uri dataImage) {
+        if (dataImage != null) {
+
+            System.out.println(mToken);
+            final StorageReference ref = mStorage.child(mToken);
+
+            ref.putFile(dataImage)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(ProfileActivity.this, "Upload success!", Toast.LENGTH_SHORT).show();
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(final Uri uri) {
+                                            System.out.println(uri.toString());
+
+                                            mDatabase.child("images").child(mToken).setValue(uri.toString());
+                                            Glide.with(displayImage).load(uri.toString()).into(displayImage);
+                                        }
+                                    });
+
+                                }
+                            }, 1500);
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(ProfileActivity.this, "Upload success!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
 
@@ -458,7 +537,6 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
                         });
         builder.create().show();
     }
-
 
     private void getUserDetails(final String userId) {
 
@@ -675,18 +753,6 @@ public class ProfileActivity extends AppCompatActivity implements TravelmateSnac
                 });
             }
         });
-    }
-
-
-    public static Intent getStartIntent(Context context) {
-        Intent intent = new Intent(context, ProfileActivity.class);
-        return intent;
-    }
-
-    public static Intent getStartIntent(Context context, String userId) {
-        Intent intent = new Intent(context, ProfileActivity.class);
-        intent.putExtra(OTHER_USER_ID, userId);
-        return intent;
     }
 
     private void fillProfileInfo(String fullName, String email, String imageURL,

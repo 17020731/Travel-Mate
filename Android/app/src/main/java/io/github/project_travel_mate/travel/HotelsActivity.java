@@ -2,13 +2,9 @@ package io.github.project_travel_mate.travel;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +17,19 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +39,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.project_travel_mate.R;
 import io.github.project_travel_mate.searchcitydialog.CitySearchModel;
-import io.github.project_travel_mate.travel.booking.App;
 import io.github.project_travel_mate.travel.booking.BookDetail;
 import io.github.project_travel_mate.travel.booking.BookingActivity;
+
+import static utils.Constants.USER_TOKEN;
 
 /**
  * Display list of hotels in destination city
@@ -56,7 +65,12 @@ public class HotelsActivity extends AppCompatActivity implements View.OnClickLis
     private ArrayList<String> mListCities = new ArrayList<>();
     private ArrayList<CitySearchModel> mSearchCities = new ArrayList<>();
 
+    private DatabaseReference mDatabase;
     private HotelAdapter mAdapter;
+    private String mToken;
+    private SharedPreferences mSharedPreferences;
+    private ArrayList<BookDetail> mListBooks = new ArrayList<>();
+
     public static Intent getStartIntent(Context context) {
         return new Intent(context, HotelsActivity.class);
     }
@@ -69,6 +83,10 @@ public class HotelsActivity extends AppCompatActivity implements View.OnClickLis
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mToken = mSharedPreferences.getString(USER_TOKEN, null);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         ButterKnife.bind(this);
 
 
@@ -84,13 +102,28 @@ public class HotelsActivity extends AppCompatActivity implements View.OnClickLis
         autoSearch.setThreshold(1);
 
 
-        mAdapter = new HotelAdapter(this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
+        mDatabase.child("books").child(mToken).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    BookDetail bd = snapshot.getValue(BookDetail.class);
+                    mListBooks.add(bd);
+                }
+                mAdapter = new HotelAdapter(HotelsActivity.this, mListBooks);
+                recyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     public void getDataSearchCities() {

@@ -16,16 +16,15 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import java.util.ArrayList;
 
 import io.github.project_travel_mate.R;
-import io.github.project_travel_mate.travel.booking.App;
 import io.github.project_travel_mate.travel.booking.BookDetail;
 
 public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.MyHolder> {
     private Context mContext;
     private ArrayList<BookDetail> mListBooked;
 
-    public HotelAdapter(Context mContext) {
+    public HotelAdapter(Context mContext, ArrayList<BookDetail> mListBooked) {
         this.mContext = mContext;
-        this.mListBooked = App.mListBooking;
+        this.mListBooked = mListBooked;
     }
 
     @NonNull
