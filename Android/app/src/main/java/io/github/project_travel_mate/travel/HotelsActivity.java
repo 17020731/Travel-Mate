@@ -61,7 +61,8 @@ public class HotelsActivity extends AppCompatActivity implements View.OnClickLis
 
     @BindView(R.id.autoSearch)
     AutoCompleteTextView autoSearch;
-
+    @BindView(R.id.empty)
+    LinearLayout empty;
     private ArrayList<String> mListCities = new ArrayList<>();
     private ArrayList<CitySearchModel> mSearchCities = new ArrayList<>();
 
@@ -113,6 +114,12 @@ public class HotelsActivity extends AppCompatActivity implements View.OnClickLis
                     BookDetail bd = snapshot.getValue(BookDetail.class);
                     mListBooks.add(bd);
                 }
+
+                if (mListBooks.size()==0){
+                    empty.setVisibility(View.VISIBLE);
+                    return;
+                }
+                empty.setVisibility(View.GONE);
                 mAdapter = new HotelAdapter(HotelsActivity.this, mListBooks);
                 recyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();

@@ -82,12 +82,38 @@
                 android:layout_height="wrap_content"
                 android:textColor="#000"
                 android:text="Hotel booked "/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_marginTop="@dimen/margin_20dp"
-                android:id="@+id/booking_list"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:cacheColorHint="@android:color/transparent" />
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginTop="@dimen/margin_20dp"
+                    android:id="@+id/booking_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cacheColorHint="@android:color/transparent" />
+                <LinearLayout
+                    android:id="@+id/empty"
+                    android:visibility="invisible"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:tint="#80cccccc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/empty"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#000"
+                        android:textStyle="italic"
+                        android:text="You're have no bookings"/>
+                </LinearLayout>
+
+            </RelativeLayout>
+
 
         </LinearLayout>
 

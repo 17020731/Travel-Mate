@@ -44,7 +44,7 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.MyHolder> {
         holder.tvAddress.setText(bd.getAddress());
         holder.tvGuest.setText("Guest:" + bd.getCount());
         holder.tvType.setText("Type: " + bd.getType());
-        holder.tvAmount.setText(String.format("%.2f", bd.getTotal() * 1.055));
+        holder.tvAmount.setText(String.format("%.2f", bd.getTotal() * 1.055) + " $");
     }
 
     @Override
