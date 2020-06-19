@@ -54,8 +54,6 @@ public class HotelsActivity extends AppCompatActivity implements View.OnClickLis
     RecyclerView recyclerView;
     @BindView(R.id.animation_view)
     LottieAnimationView animationView;
-    @BindView(R.id.text_view)
-    TextView textView;
     @BindView(R.id.layout)
     LinearLayout layout;
 
@@ -107,6 +105,7 @@ public class HotelsActivity extends AppCompatActivity implements View.OnClickLis
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.smoothScrollToPosition(0);
         mDatabase.child("books").child(mToken).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

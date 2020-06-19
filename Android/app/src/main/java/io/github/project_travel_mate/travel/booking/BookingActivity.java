@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cooltechworks.creditcarddesign.CardEditActivity;
+import com.cooltechworks.creditcarddesign.CreditCardUtils;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -36,14 +38,14 @@ public class BookingActivity extends AppCompatActivity implements BookingAdapter
 
     //-----------------PAYPAL--------------//
     public static final int PAYPAL_REQUEST_CODE = 1;
-    //----------------MOMO--------------//
-    public static final int MOMO_REQUEST_CODE = 2;
-    public static final String KEY_ENVIRONMENT = "key_environment";
+
     private static final String PAYPAL_CLIENT_ID = "AQXkh5kMzlFd-Anf03R1AYOh2V8ZfsH-R-4iJ2gc2bMkSELdsSIPknvy000r5oeyhNY45P7cXIPfGzPW";
     private static PayPalConfiguration config = new PayPalConfiguration()
             .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
             .clientId(PAYPAL_CLIENT_ID);
-    public int enviroment = 1;
+
+    final int GET_NEW_CARD = 2;
+
     @BindView(R.id.mRecycle)
     RecyclerView mRecycle;
     @BindView(R.id.btnGrid)
@@ -188,9 +190,10 @@ public class BookingActivity extends AppCompatActivity implements BookingAdapter
                 Toast.makeText(this, "Payment invalid!", Toast.LENGTH_SHORT).show();
 
             }
-        } else if (requestCode == 2) {
-            if (requestCode == RESULT_OK) {
-
+        } else if (requestCode == GET_NEW_CARD) {
+            if (resultCode == RESULT_OK) {
+                mAdapter.tvAmount.setPaintFlags(mAdapter.tvAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                mAdapter.imgPay.setImageResource(R.drawable.visa);
             }
         }
     }
@@ -204,5 +207,12 @@ public class BookingActivity extends AppCompatActivity implements BookingAdapter
         startActivityForResult(intent, PAYPAL_REQUEST_CODE);
 
     }
+
+    @Override
+    public void onHandleCardSelection(Booking bd) {
+        Intent intent = new Intent(this, CardEditActivity.class);
+        startActivityForResult(intent,GET_NEW_CARD);
+    }
+
 
 }

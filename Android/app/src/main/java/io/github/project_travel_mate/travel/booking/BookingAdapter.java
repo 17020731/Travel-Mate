@@ -21,9 +21,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.cooltechworks.creditcarddesign.CreditCardView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
@@ -37,8 +39,10 @@ import io.github.project_travel_mate.R;
 
 import static utils.Constants.USER_TOKEN;
 
-public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder>{
+public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder> {
 
+    public TextView tvAmount;
+    public ImageView imgPay;
     private Context mContext;
     private ArrayList<Booking> mListBooks;
     private int type;
@@ -47,8 +51,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
     private DatabaseReference mDatabase;
     private CallbackInterface mCallback;
 
-    public TextView tvAmount;
-    public ImageView imgPay;
     public BookingAdapter(Context mContext, ArrayList<Booking> mListBooks, int type) {
         this.mContext = mContext;
         this.mListBooks = mListBooks;
@@ -206,6 +208,10 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                         btnMaster.setBackgroundResource(R.drawable.button_unselect);
                         btnPaypal.setBackgroundResource(R.drawable.button_unselect);
 
+                        if (mCallback != null) {
+                            mCallback.onHandleCardSelection(book);
+                        }
+
                     }
                 });
 
@@ -217,6 +223,9 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                         btnVisa.setBackgroundResource(R.drawable.button_unselect);
                         btnCash.setBackgroundResource(R.drawable.button_unselect);
                         btnPaypal.setBackgroundResource(R.drawable.button_unselect);
+                        if (mCallback != null) {
+                            mCallback.onHandleCardSelection(book);
+                        }
                     }
                 });
 
@@ -300,6 +309,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
 
     public interface CallbackInterface {
         void onHandlePaypalSelection(Booking bd);
+        void onHandleCardSelection(Booking bd);
     }
 
     public class MyHolder extends RecyclerView.ViewHolder {

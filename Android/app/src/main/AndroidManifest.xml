@@ -64,7 +64,9 @@
             android:enabled="true" />
 
         <activity android:name=".travel.booking.BookingActivity" />
-
+        <activity
+            android:name="com.cooltechworks.creditcarddesign.CardEditActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".utilities.ChecklistActivity"
             android:label="@string/title_activity_select_city"

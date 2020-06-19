@@ -44,6 +44,7 @@ repositories {
     maven { url "https://repo.commonsware.com.s3.amazonaws.com" }
     maven { url "https://jitpack.io" }
     mavenCentral()
+    jcenter()
 }
 
 configurations {
@@ -130,6 +131,9 @@ dependencies {
 
     //Paypal
     implementation 'com.paypal.sdk:paypal-android-sdk:2.15.3'
+    
+    //Credit card
+    implementation 'com.github.sharish:CreditCardView:v1.0.4'
 }
 
 //preBuild.dependsOn('checkstyle')

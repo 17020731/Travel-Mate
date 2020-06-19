@@ -117,14 +117,6 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/text_view"
-            android:layout_width="222dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:gravity="center"
-            android:layout_marginBottom="5dp"
-            android:text="@string/hotels_text" />
-    </FrameLayout>
+       </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
