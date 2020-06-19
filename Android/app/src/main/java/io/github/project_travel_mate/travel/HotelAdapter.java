@@ -1,6 +1,7 @@
 package io.github.project_travel_mate.travel;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,15 +51,19 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.MyHolder> {
             holder.imgMethod.setImageResource(R.drawable.cash);
         } else if (bd.getMethod().equalsIgnoreCase("paypal")) {
             holder.imgMethod.setImageResource(R.drawable.paypal);
+            holder.tvAmount.setPaintFlags(holder.tvAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         } else if (bd.getMethod().equalsIgnoreCase("visa")) {
             holder.imgMethod.setImageResource(R.drawable.visa);
+            holder.tvAmount.setPaintFlags(holder.tvAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         } else if (bd.getMethod().equalsIgnoreCase("master card")) {
             holder.imgMethod.setImageResource(R.drawable.master_card);
+            holder.tvAmount.setPaintFlags(holder.tvAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         } else if (bd.getMethod().equalsIgnoreCase("momo")) {
             holder.imgMethod.setImageResource(R.drawable.momo);
+            holder.tvAmount.setPaintFlags(holder.tvAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         }
     }

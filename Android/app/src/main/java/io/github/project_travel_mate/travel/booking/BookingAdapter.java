@@ -37,7 +37,7 @@ import io.github.project_travel_mate.R;
 
 import static utils.Constants.USER_TOKEN;
 
-public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder> {
+public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder>{
 
     private Context mContext;
     private ArrayList<Booking> mListBooks;
@@ -102,7 +102,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
             @Override
             public void onClick(View v) {
 
-                final String[] METHOD = {""};
+                final String[] METHOD = {"Cash"};
                 BottomSheetDialog dialog = new BottomSheetDialog(mContext);
                 dialog.setContentView(R.layout.dialog_booking);
                 final EditText edName = dialog.findViewById(R.id.edName);
@@ -118,7 +118,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                 TextView tvHotel = dialog.findViewById(R.id.tvHotel);
                 TextView tvAddress = dialog.findViewById(R.id.tvAddress);
                 LinearLayout btnCash = dialog.findViewById(R.id.btnCash);
-                LinearLayout btnMomo = dialog.findViewById(R.id.btnMomo);
                 LinearLayout btnMaster = dialog.findViewById(R.id.btnMasterCard);
                 LinearLayout btnVisa = dialog.findViewById(R.id.btnVisa);
                 LinearLayout btnPaypal = dialog.findViewById(R.id.btnPaypal);
@@ -190,7 +189,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                     public void onClick(View view) {
                         METHOD[0] = "Cash";
                         btnCash.setBackgroundResource(R.drawable.button_select);
-                        btnMomo.setBackgroundResource(R.drawable.button_unselect);
                         btnVisa.setBackgroundResource(R.drawable.button_unselect);
                         btnMaster.setBackgroundResource(R.drawable.button_unselect);
                         btnPaypal.setBackgroundResource(R.drawable.button_unselect);
@@ -198,24 +196,12 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                     }
                 });
 
-                btnMomo.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        METHOD[0] = "Momo";
-                        btnMomo.setBackgroundResource(R.drawable.button_select);
-                        btnCash.setBackgroundResource(R.drawable.button_unselect);
-                        btnVisa.setBackgroundResource(R.drawable.button_unselect);
-                        btnMaster.setBackgroundResource(R.drawable.button_unselect);
-                        btnPaypal.setBackgroundResource(R.drawable.button_unselect);
-                    }
-                });
 
                 btnVisa.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         METHOD[0] = "Visa";
                         btnVisa.setBackgroundResource(R.drawable.button_select);
-                        btnMomo.setBackgroundResource(R.drawable.button_unselect);
                         btnCash.setBackgroundResource(R.drawable.button_unselect);
                         btnMaster.setBackgroundResource(R.drawable.button_unselect);
                         btnPaypal.setBackgroundResource(R.drawable.button_unselect);
@@ -228,7 +214,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                     public void onClick(View view) {
                         METHOD[0] = "Master Card";
                         btnMaster.setBackgroundResource(R.drawable.button_select);
-                        btnMomo.setBackgroundResource(R.drawable.button_unselect);
                         btnVisa.setBackgroundResource(R.drawable.button_unselect);
                         btnCash.setBackgroundResource(R.drawable.button_unselect);
                         btnPaypal.setBackgroundResource(R.drawable.button_unselect);
@@ -241,13 +226,12 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
                         METHOD[0] = "Paypal";
 
                         btnPaypal.setBackgroundResource(R.drawable.button_select);
-                        btnMomo.setBackgroundResource(R.drawable.button_unselect);
                         btnMaster.setBackgroundResource(R.drawable.button_unselect);
                         btnVisa.setBackgroundResource(R.drawable.button_unselect);
                         btnCash.setBackgroundResource(R.drawable.button_unselect);
 
                         if (mCallback != null) {
-                            mCallback.onHandleSelection(book);
+                            mCallback.onHandlePaypalSelection(book);
                         }
 
                     }
@@ -308,16 +292,14 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.MyHolder
         });
     }
 
-    public void processPayment() {
-    }
-
     @Override
     public int getItemCount() {
         return mListBooks.size();
     }
 
+
     public interface CallbackInterface {
-        void onHandleSelection(Booking bd);
+        void onHandlePaypalSelection(Booking bd);
     }
 
     public class MyHolder extends RecyclerView.ViewHolder {

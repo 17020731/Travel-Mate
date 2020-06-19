@@ -435,18 +435,6 @@
                                 android:src="@drawable/visa" />
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:id="@+id/btnMomo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/button_unselect"
-                            android:padding="8dp">
-
-                            <com.makeramen.roundedimageview.RoundedImageView
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:src="@drawable/momo" />
-                        </LinearLayout>
                     </LinearLayout>
                 </HorizontalScrollView>
 
@@ -486,9 +474,9 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -504,9 +492,9 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -521,9 +509,9 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -534,8 +522,8 @@
                     android:id="@+id/imgPay"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:scaleType="centerCrop"
                     android:layout_alignParentRight="true"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/cash" />
             </RelativeLayout>
 

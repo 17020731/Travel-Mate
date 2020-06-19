@@ -115,4 +115,5 @@
         parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/corner_dialog</item>
     </style>
+
 </resources>

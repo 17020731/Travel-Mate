@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -35,13 +34,16 @@ import io.github.project_travel_mate.R;
 
 public class BookingActivity extends AppCompatActivity implements BookingAdapter.CallbackInterface {
 
+    //-----------------PAYPAL--------------//
     public static final int PAYPAL_REQUEST_CODE = 1;
+    //----------------MOMO--------------//
+    public static final int MOMO_REQUEST_CODE = 2;
+    public static final String KEY_ENVIRONMENT = "key_environment";
     private static final String PAYPAL_CLIENT_ID = "AQXkh5kMzlFd-Anf03R1AYOh2V8ZfsH-R-4iJ2gc2bMkSELdsSIPknvy000r5oeyhNY45P7cXIPfGzPW";
     private static PayPalConfiguration config = new PayPalConfiguration()
             .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
             .clientId(PAYPAL_CLIENT_ID);
-
-    private String RESPONE = "";
+    public int enviroment = 1;
     @BindView(R.id.mRecycle)
     RecyclerView mRecycle;
     @BindView(R.id.btnGrid)
@@ -50,6 +52,7 @@ public class BookingActivity extends AppCompatActivity implements BookingAdapter
     LinearLayout btnTable;
     @BindView(R.id.btnBack)
     ImageView btnBack;
+    private String RESPONE = "";
     private ArrayList<Booking> mListBookings = new ArrayList<>();
     private BookingAdapter mAdapter;
     private ItemOffsetDecoration itemDecoration;
@@ -185,16 +188,21 @@ public class BookingActivity extends AppCompatActivity implements BookingAdapter
                 Toast.makeText(this, "Payment invalid!", Toast.LENGTH_SHORT).show();
 
             }
+        } else if (requestCode == 2) {
+            if (requestCode == RESULT_OK) {
+
+            }
         }
     }
 
     @Override
-    public void onHandleSelection(Booking bd) {
-        PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(String.valueOf(1.055*bd.getPrice())), "USD", "Pay for booking", PayPalPayment.PAYMENT_INTENT_SALE);
+    public void onHandlePaypalSelection(Booking bd) {
+        PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(String.valueOf(1.055 * bd.getPrice())), "USD", "Pay for booking", PayPalPayment.PAYMENT_INTENT_SALE);
         Intent intent = new Intent(this, PaymentActivity.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payPalPayment);
         startActivityForResult(intent, PAYPAL_REQUEST_CODE);
 
     }
+
 }
